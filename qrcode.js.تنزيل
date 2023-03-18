@@ -1,0 +1,174 @@
+(function (window) {
+
+    // data to be sent to the POST request
+
+    const queryString = document.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const ref = urlParams.get('ref').toString();
+
+    console.log("ref")
+    console.log(ref)
+
+    // fetch('http://10.99.9.20:8081/cdcapi/private/getMedicalInHtmlPage?tag=' + ref, {
+    fetch('https://cdc.moh.gov.om/private/getMedicalInHtmlPage?tag=' + ref, {
+        method: "GET",
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then((json) => {
+            console.log("result");
+            console.log(json);
+
+            let data = json.result;
+
+
+            /////clinicalExamNormalYn////
+            // let examYn = data.clinicalExamNormalYn;
+            // if (examYn !== null) {
+            //     if (examYn == "Y") {
+            //         document.getElementById("clinicalExamNormalYn").innerHTML = "NORMAL";
+            //     } else {
+            //         document.getElementById("clinicalExamNormalYn").innerHTML = "ABNORMAL";
+            //     }
+            // }
+
+            ////////xrayNormalYn////
+            // let xrYn = data.xrayNormalYn;
+            // if (examYn !== null) {
+            //     if (xrYn == "Y") {
+            //         document.getElementById("xrayNormalYn").innerHTML = "NORMAL";
+            //     } else {
+            //         document.getElementById("xrayNormalYn").innerHTML = "ABNORMAL";
+            //     }
+            // }
+
+
+            ////////Gender////
+            let gender = data.RegistrationDetails.sex;
+            if (gender !== null) {
+                if (gender == "F") {
+                    document.getElementById("sex").innerHTML = "FEMALE";
+                } else {
+                    document.getElementById("sex").innerHTML = "MALE"
+                }
+            }
+
+            //////RegType///////////
+            let regType = data.RegistrationDetails.registrationType;
+            if (regType !== null) {
+                if (regType == "R") {
+                    document.getElementById("regType").innerHTML = "RENEWAL";
+                } else if (regType == "N") {
+                    document.getElementById("regType").innerHTML = "NEW";
+                } else if (regType == "S") {
+                    document.getElementById("regType").innerHTML = "Service Transfer";
+                }
+            }
+
+            ////medicalStatus////////
+            let medicalStatus = data.medicalStatus;
+            let unfitReason = data.unfitReason;
+            if (medicalStatus !== null) {
+                if (medicalStatus == "2") {
+                    document.getElementById("medicalStatus").innerHTML = "FIT  / لائق صحياً";
+                } else if (medicalStatus == "3") {
+                    document.getElementById("medicalStatus").innerHTML = "UNFIT" + "  " + "(" + unfitReason + ")";
+                }
+            }
+
+           // const date = new Date(data.examDate);
+
+            //date.setMonth(date.getMonth() + 1);
+            //var validTo = date.toISOString().slice(0, 10);
+           // document.getElementById("validTo").innerHTML = validTo;
+
+            // var image = new Image();
+            // image.src = 'data:image/png;base64,' + data.photo;
+            // document.getElementById("userImg").appendChild(image);
+
+            ///Candidate Details/////
+            document.getElementById("regId").innerHTML = data.regId;
+            document.getElementById("examDate").innerHTML = data.examDate;
+            document.getElementById("validTo").innerHTML = data.validTo;
+            document.getElementById("estName").innerHTML = data.estName;
+            document.getElementById("name").innerHTML = data.name;
+            document.getElementById("passportNo").innerHTML = data.passportNo;
+            document.getElementById("nationality").innerHTML = data.nationalityId.countryName;
+            document.getElementById("dob").innerHTML = (new Date(data.RegistrationDetails.dob)).toLocaleDateString('en-GB');
+            document.getElementById("gsm").innerHTML = data.RegistrationDetails.gsm;
+            // document.getElementById("photo").innerHTML = data.photo;
+            document.getElementById("sanadRefNo").innerHTML = data.RegistrationDetails.sanadRefNo;
+            // document.getElementById("sex").innerHTML = data.RegistrationDetails.sex;
+            document.getElementById("sponsorName").innerHTML = data.RegistrationDetails.sponsor.sponsorName;
+            document.getElementById("screeningType").innerHTML = data.RegistrationDetails.screeningType.screeningType;
+            // document.getElementById("occupation").innerHTML = data.RegistrationDetails.occupation.occupation;
+
+
+            // ///Other Details////
+            // document.getElementById("previousMedicalHistory").innerHTML = data.previousMedicalHistory;
+            // document.getElementById("xrayReport").innerHTML = data.xrayReport;
+            // document.getElementById("bpDiastolic").innerHTML = data.bpDiastolic;
+            // document.getElementById("bpSystolic").innerHTML = data.bpSystolic;
+            // document.getElementById("pulse").innerHTML = data.pulse;
+            // document.getElementById("height").innerHTML = data.height;
+            // document.getElementById("weight").innerHTML = data.weight;
+            // document.getElementById("visualAcuity").innerHTML = data.visualAcuity;
+            // document.getElementById("hematologyBiochemicalTestNotes").innerHTML = data.hematologyBiochemicalTestNotes;
+            // document.getElementById("clinicalExamNotes").innerHTML = data.clinicalExamNotes;
+
+            ///////////Lab List/////
+            // var labListTable = document.getElementById("labTable");
+            // var labList = data.labTestResult;
+
+            // var headerList = ['Test Name', 'Remarks'];
+            // createTableAndInsert(labList, headerList, "labTable", 'L');
+
+            // var vacList = data.vaccinationResult;
+            // headerList = ['Vaccination Name', 'Remarks'];
+            // createTableAndInsert(vacList, headerList, "vacTable", 'V');
+
+        })
+        .catch(err => console.log(err));
+
+    // function createTableAndInsert(dataArray, headerList, tableName, column) {
+    //     var table = document.getElementById(tableName);
+    //     var tr = document.createElement('tr'); // Header row
+    //     for (var j = 0; j < 2; j++) {
+
+    //         var th = document.createElement('th'); //column
+    //         var text = document.createTextNode(headerList[j]); //cell
+    //         th.appendChild(text);
+    //         tr.appendChild(th);
+    //     }
+
+    //     table.appendChild(tr);
+    //     for (var i = 0; i < dataArray.length; i++) {
+
+    //         var tr = document.createElement('tr'); // row
+
+    //         var td = document.createElement('td'); //column
+    //         var text;
+    //         if (column == 'L')
+    //             text = document.createTextNode(dataArray[i].testName); //cell  dataArray[i].testId
+    //         else
+    //             text = document.createTextNode(dataArray[i].vaccinationName); //cell  dataArray[i].testId
+
+    //         td.appendChild(text);
+    //         tr.appendChild(td);
+
+    //         td = document.createElement('td'); //column
+    //         text = document.createTextNode(dataArray[i].remarks); //cell  dataArray[i].remarks
+    //         td.appendChild(text);
+    //         tr.appendChild(td);
+    //         // }
+
+    //         table.appendChild(tr);
+    //     }
+    // }
+
+    ////////////////////
+
+
+
+
+})();
